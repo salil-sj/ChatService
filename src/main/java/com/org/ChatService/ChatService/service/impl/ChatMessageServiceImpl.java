@@ -19,7 +19,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public Boolean handleReceivedMessage(Message message) {
-        if (userPresenceService.isConnected(message.getReceiver_user_name())) {
+        if (userPresenceService.isConnected(message.getReceiverUserName())) {
             // proceed to push in MQ with read flag as true:
             processMessageToMQ(message, true);
             return true;
@@ -34,7 +34,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public void processMessageToMQ(Message message, Boolean flag) {
         System.out.println("Sending the message to queue");
-       message.set_read(flag);
+       message.setRead(flag);
        jmsProducer.sendMessage(message);
     }
 }

@@ -37,7 +37,7 @@ public class ChatController {
         System.out.println("Thread for Web Socket is ---------------------------" + Thread.currentThread().getName());
         if (chatMessageService.handleReceivedMessage(message)) {
             // User is connected:
-            simpMessagingTemplate.convertAndSendToUser(message.getReceiver_user_name(), "/private", message);
+            simpMessagingTemplate.convertAndSendToUser(message.getReceiverUserName(), "/private", message);
             return new MessageResponse("Message Delivered successfully");
         } else {
             // User not connected
