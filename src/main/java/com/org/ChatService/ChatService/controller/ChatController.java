@@ -8,10 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,6 +34,7 @@ public class ChatController {
 
     @MessageMapping("/private-message")
     private MessageResponse receivedMessage(@Payload Message message) {
+        System.out.println("Thread for Web Socket is ---------------------------" + Thread.currentThread().getName());
         if (chatMessageService.handleReceivedMessage(message)) {
             // User is connected:
             simpMessagingTemplate.convertAndSendToUser(message.getReceiver_user_name(), "/private", message);
