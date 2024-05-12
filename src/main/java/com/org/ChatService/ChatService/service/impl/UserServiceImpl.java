@@ -64,4 +64,16 @@ public class UserServiceImpl implements UserService  , UserDetailsService {
         }
         return false;
     }
+
+    public boolean checkUserExists(String user)
+    {
+        User extractedUer =  userRepository.findByUsername(user).orElse(null);
+        if(extractedUer!=null)
+        {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

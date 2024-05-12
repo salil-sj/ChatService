@@ -2,6 +2,9 @@ package com.org.ChatService.ChatService.filter;
 
 import com.org.ChatService.ChatService.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@Order(Ordered.LOWEST_PRECEDENCE - 1)
 public class SecurityFilter extends OncePerRequestFilter
 {
     @Autowired
@@ -28,6 +32,7 @@ public class SecurityFilter extends OncePerRequestFilter
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
     {
+        System.out.println("Security fielter in action!!!!!!!!!!!!");
         String token = request.getHeader("Authorization");
 
         if(token!=null)

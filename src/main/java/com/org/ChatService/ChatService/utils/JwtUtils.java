@@ -71,7 +71,7 @@ public class JwtUtils
                 .setSubject(subject)
                 .setIssuer("CHATAPPLICATION")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30)))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(300000000)))
                 .signWith(SignatureAlgorithm.HS256 , secret)
                 .compact();
     }

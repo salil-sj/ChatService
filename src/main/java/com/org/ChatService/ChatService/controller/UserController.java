@@ -1,5 +1,7 @@
 package com.org.ChatService.ChatService.controller;
 
+import com.org.ChatService.ChatService.model.AuthResponse;
+import com.org.ChatService.ChatService.model.Message;
 import com.org.ChatService.ChatService.model.User;
 import com.org.ChatService.ChatService.service.UserService;
 import com.org.ChatService.ChatService.utils.JwtUtils;
@@ -7,12 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -41,7 +47,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    private ResponseEntity<String> login(@RequestBody User user) {
+    public ResponseEntity<AuthResponse> login(@RequestBody User user) {
         System.out.println("Login method started");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -51,15 +57,30 @@ public class UserController {
         );
 
         String token = jwtUtils.generateToken(user.getUsername());
-        return ResponseEntity.ok(token);
+        AuthResponse response = new AuthResponse(token);
+        return ResponseEntity.ok(response);
 
     }
 
+
+    @GetMapping(value="/userExists/{user}")
+    public ResponseEntity<Boolean> userExists(@PathVariable("user") String user)
+    {
+       return  ResponseEntity.ok(userService.checkUserExists(user));
+
+    }
+
+
+
     @PostMapping("/details")
-    private ResponseEntity<String> userDetails()
+    private ResponseEntity<String>
+    userDetails()
     {
         return ResponseEntity.ok("User details controller");
     }
+
+
+
 
 
 }

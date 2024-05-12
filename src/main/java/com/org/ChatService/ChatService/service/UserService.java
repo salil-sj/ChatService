@@ -6,4 +6,7 @@ public interface UserService
 {
     public User saveUser(User user);
     public boolean checkForDuplicateEntry(User user);
+
+    public boolean checkUserExists(String user);
+
 }
