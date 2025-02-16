@@ -1,5 +1,6 @@
 package com.org.ChatService.ChatService.service;
 
+import com.org.ChatService.ChatService.model.DTO.MessageResponseDTO;
 import com.org.ChatService.ChatService.model.Message;
 
 public interface ChatMessageService
@@ -11,4 +12,11 @@ public interface ChatMessageService
     public Boolean handleReceivedMessage(Message message);
 
     public void processMessageToMQ(Message message , Boolean flag);
+
+
+    public void updateReadFlag(String senderUserName , String receiverUserName);
+
+//    public boolean checkFullNameByUserName(String userName);
+//
+//    public MessageResponseDTO getFullNameObjByUserName(Message message);
 }

@@ -41,6 +41,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Autowired
     private UserPresenceService userPresenceService;
 
+
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
@@ -65,6 +67,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
                 assert accessor != null;
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                    System.out.println("NEW CONNECTION--------------------------" );
 
                     String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
                     System.out.println(authorizationHeader);
@@ -81,12 +84,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     userPresenceService.addUser(uName);
 
                 } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                    System.out.println("DISCONNECTION--------------------------" );
                     // Removing the user from Concurrent Hash Map:
                     String uName = accessor.getUser().getName();
                     userPresenceService.removeUser(uName);
                 }
 
-                return message;
+                System.out.println("Hash map details------------------START------------");
+                System.out.println(userPresenceService.getHashMapDetails());
+                System.out.println("Hash map details----------------------------------");
+
+                    return message;
             }
 
         });

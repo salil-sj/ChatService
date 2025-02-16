@@ -1,20 +1,19 @@
 package com.org.ChatService.ChatService.controller;
 
 import com.org.ChatService.ChatService.model.AuthResponse;
-import com.org.ChatService.ChatService.model.Message;
+import com.org.ChatService.ChatService.model.DTO.*;
+import com.org.ChatService.ChatService.model.RecentMessages;
 import com.org.ChatService.ChatService.model.User;
+import com.org.ChatService.ChatService.service.MessageService;
 import com.org.ChatService.ChatService.service.UserService;
 import com.org.ChatService.ChatService.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -30,6 +29,9 @@ public class UserController {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private MessageService messageService;
 
     @PostMapping("/save")
     private ResponseEntity<String> signup(@RequestBody User user) {
@@ -47,7 +49,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody User user) {
+    public ResponseEntity<LoginResponse> login(@RequestBody User user) {
         System.out.println("Login method started");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -58,29 +60,58 @@ public class UserController {
 
         String token = jwtUtils.generateToken(user.getUsername());
         AuthResponse response = new AuthResponse(token);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new LoginResponse(token, user.getUsername()));
 
     }
 
 
-    @GetMapping(value="/userExists/{user}")
-    public ResponseEntity<Boolean> userExists(@PathVariable("user") String user)
+    @GetMapping(value = "/userExists/{user}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> userExists(@PathVariable("user") String user) {
+        return ResponseEntity.ok(userService.checkUserExists(user));
+
+    }
+
+    @PostMapping("/getProfileDetails")
+    public ResponseEntity<UserProfileDTO> getUserDetails(@RequestBody String userName) {
+        return ResponseEntity.ok(userService.getUserProfileDetails(userName));
+    }
+
+
+    @PostMapping("/updateProfile")
+    public ResponseEntity<Integer> updateProfile(@RequestBody User user)
     {
-       return  ResponseEntity.ok(userService.checkUserExists(user));
-
+       return ResponseEntity.ok(userService.updateProfile(user));
     }
 
 
 
-    @PostMapping("/details")
-    private ResponseEntity<String>
-    userDetails()
+    @PostMapping("/getRecentMessage")
+    public ResponseEntity<List<RecentMessages>> getRecentMessages(@RequestBody String userName)
     {
-        return ResponseEntity.ok("User details controller");
+        System.out.println("Username is ----------- " + userName);
+        List<RecentMessages> recentMessages = messageService.getRecentMessageForUser(userName);
+        return ResponseEntity.ok(recentMessages);
     }
 
 
+    /*
+    Search User based on query string for Search Bar
+     */
+    @PostMapping("/userResults")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<UserSearchResults>> getUserSearchResults(@RequestBody String queryString)
+    {
+        return  ResponseEntity.ok(userService.getUsersBySearchQuery(queryString));
+    }
 
+
+    @PostMapping("/messageHistory")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<MessageHistory>> getMessageHistory(@RequestBody MessageDetailsRequest messageDetailsRequest)
+    {
+        return ResponseEntity.ok(messageService.getMessageHistory(messageDetailsRequest.getUserA(), messageDetailsRequest.getUserB()));
+    }
 
 
 }

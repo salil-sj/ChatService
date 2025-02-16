@@ -34,6 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter
     {
         System.out.println("Security fielter in action!!!!!!!!!!!!");
         String token = request.getHeader("Authorization");
+        System.out.println("Access token is******-----------" + token);
 
         if(token!=null)
         {

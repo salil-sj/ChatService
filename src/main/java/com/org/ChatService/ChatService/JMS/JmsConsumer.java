@@ -1,7 +1,6 @@
 package com.org.ChatService.ChatService.JMS;
 
 import com.org.ChatService.ChatService.model.Message;
-import com.org.ChatService.ChatService.repository.MessageRepository;
 import com.org.ChatService.ChatService.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
